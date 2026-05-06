@@ -43,7 +43,7 @@ if not exist "venv\Scripts\python.exe" (
 
 REM --- Frontend modules ---
 cd "%~dp0frontend"
-if not exist "node_modules\.package-lock.json" (
+if not exist "node_modules" (
     echo [..] Installing Node packages, please wait...
     call npm install
     if errorlevel 1 (
@@ -57,11 +57,11 @@ cd "%~dp0"
 
 echo.
 echo [2/3] Starting backend API on http://localhost:8000 ...
-start "AthleteIQ Backend" cmd /k "cd /d "%~dp0backend" && venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
+start "AthleteIQ Backend" /D "%~dp0backend" cmd /k "venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
 echo [3/3] Starting frontend on http://localhost:3000 ...
 ping -n 5 127.0.0.1 >nul
-start "AthleteIQ Frontend" cmd /k "cd /d "%~dp0frontend" && npm run dev"
+start "AthleteIQ Frontend" /D "%~dp0frontend" cmd /k "npm run dev"
 
 ping -n 6 127.0.0.1 >nul
 start "" http://localhost:3000

@@ -20,6 +20,10 @@ export interface TrainingLog {
   training_type: string;
   session_load: number;
   cycle_phase?: string;
+  description?: string;
+  coach_notes?: string;
+  tags?: string[];
+  source?: string;
 }
 
 export interface DashboardOverview {
@@ -506,7 +510,7 @@ export const getMentalWeeklyReport = (athleteId: string) =>
   fetchJSON(`/mental/${athleteId}/weekly-report`);
 
 export const getAthleteReport = (athleteId: string) =>
-  fetchJSON(`/dashboard/athlete/${athleteId}/report`);
+  fetchJSON<any>(`/dashboard/athlete/${athleteId}/report`);
 
 export const getTrainingLogs = (athleteId: string, limit = 10) =>
   fetchJSON<TrainingLog[]>(`/training/log/${athleteId}?limit=${limit}`);
@@ -529,7 +533,7 @@ export const assignSessionToAthletes = (sessionId: string, athleteIds: string[])
   });
 
 export const createExercise = (data: any) =>
-  fetchJSON('/exercises/', { method: 'POST', body: JSON.stringify(data) });
+  fetchJSON<ExerciseLibrary>('/exercises/', { method: 'POST', body: JSON.stringify(data) });
 
 export const updateExercise = (id: string, data: any) =>
   fetchJSON(`/exercises/${id}`, { method: 'PUT', body: JSON.stringify(data) });
@@ -941,6 +945,7 @@ export interface TrainingTemplate {
   sport?: string;
   intensity_zone?: string;
   target_focus?: string[];
+  weekly_frequency?: string;
   is_public: boolean;
   content: any;
   description?: string;

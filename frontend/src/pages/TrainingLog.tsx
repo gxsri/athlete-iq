@@ -508,7 +508,7 @@ export function TrainingLog() {
       {showPlanModal && <Modal onClose={()=>setShowPlanModal(false)} title="周计划设置">
         <div className="space-y-2">
           {DAYS.map((d,i)=><div key={i} className="flex items-center gap-3"><span className="text-xs w-10">{d}</span><input type="number" value={planVals[i]} onChange={e=>{const n=[...planVals];n[i]=+e.target.value;setPlanVals(n)}}/></div>)}
-          <button onClick={()=>{const t=planVals.map((v,i)=>({dayOfWeek:i===6?0:i+1,targetLoad:v}));setPlanTargets(t);savePlanTargets(t);setShowPlanModal(false)}} className="btn btn-primary w-full justify-center mt-2">保存</button>
+          <button onClick={()=>{const t=planVals.map((v: number,i: number)=>({dayOfWeek:i===6?0:i+1,targetLoad:v}));setPlanTargets(t);savePlanTargets(t);setShowPlanModal(false)}} className="btn btn-primary w-full justify-center mt-2">保存</button>
         </div>
       </Modal>}
     </div>

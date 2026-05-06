@@ -271,7 +271,7 @@ class PlannedExercise(Base):
     __tablename__ = "planned_exercises"
     id = _UID(primary_key=True)
     planned_session_id = _FKey("planned_sessions.id", ondelete="CASCADE", nullable=False)
-    exercise_id = _FKey("exercise_library.id", nullable=False)
+    exercise_id = _FKey("exercise_library.id", nullable=True)
     order_index = Column(Integer, nullable=False)
     target_weight_kg = Column(Float)
     target_reps = Column(Integer)
@@ -566,6 +566,7 @@ class TrainingTemplate(Base):
     target_focus = Column(JSON, default=list)            # ["技术","步法","耐力"...]
     created_by = Column(String(36))
     is_public = Column(Boolean, default=True)
+    weekly_frequency = Column(String(50))                 # "2-3次（非连续日）"
     content = Column(JSON, nullable=False)               # 模板内容 JSON
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)

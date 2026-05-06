@@ -3,7 +3,7 @@ from datetime import date, datetime
 from pydantic import BaseModel, Field, validator
 from uuid import UUID
 
-VALID_SPORTS = ["篮球","足球","游泳","田径","羽毛球","排球","网球","乒乓球","拳击","举重","体操","击剑","柔道","跆拳道","其他"]
+VALID_SPORTS = ["篮球","足球","游泳","田径","羽毛球","排球","网球","乒乓球","拳击","举重","体操","击剑","柔道","跆拳道","通用","其他"]
 VALID_TYPES = ["力量","耐力","速度","技战术","柔韧","混合"]
 
 def _opt_date(f): return Field(None) if f == date else None
@@ -364,7 +364,7 @@ class ExerciseLibraryListResponse(BaseModel):
 # ============ Planned Exercise / Session Schemas ============
 
 class PlannedExerciseCreate(BaseModel):
-    exercise_id: UUID
+    exercise_id: Optional[UUID] = None
     order_index: int = Field(..., ge=0)
     target_weight_kg: Optional[float] = Field(None, ge=0)
     target_reps: Optional[int] = Field(None, ge=0)
@@ -377,7 +377,7 @@ class PlannedExerciseCreate(BaseModel):
 class PlannedExerciseResponse(BaseModel):
     id: UUID
     planned_session_id: UUID
-    exercise_id: UUID
+    exercise_id: Optional[UUID] = None
     order_index: int
     target_weight_kg: Optional[float]
     target_reps: Optional[int]
@@ -1015,6 +1015,7 @@ class TrainingTemplateCreate(BaseModel):
     sport: str = Field(default="羽毛球", max_length=50)
     intensity_zone: Optional[str] = None
     target_focus: Optional[List[str]] = Field(default_factory=list)
+    weekly_frequency: Optional[str] = None
     is_public: bool = True
     content: dict
     description: Optional[str] = None
@@ -1025,6 +1026,7 @@ class TrainingTemplateUpdate(BaseModel):
     type: Optional[str] = Field(None, pattern="^(daily|weekly|periodized)$")
     intensity_zone: Optional[str] = None
     target_focus: Optional[List[str]] = None
+    weekly_frequency: Optional[str] = None
     is_public: Optional[bool] = None
     content: Optional[dict] = None
     description: Optional[str] = None
@@ -1037,6 +1039,7 @@ class TrainingTemplateResponse(BaseModel):
     sport: Optional[str]
     intensity_zone: Optional[str]
     target_focus: Optional[List[str]]
+    weekly_frequency: Optional[str] = None
     is_public: bool
     content: dict
     description: Optional[str]

@@ -99,7 +99,7 @@ export function Planner() {
 
   const loadTemplate = (template: TrainingTemplate) => {
     setSessionName(template.name);
-    const ttype = template.intensity_zone === '高' ? '力量' :
+    const ttype = template.intensity_zone === '高' || template.intensity_zone === '极高' ? '力量' :
                   template.intensity_zone === '低' ? '柔韧' : '混合';
     setTrainingType(ttype);
     setNotes(template.description || '');
@@ -112,8 +112,8 @@ export function Planner() {
         reps: seg.reps || 1,
         sets: seg.sets || 1,
         rpe: seg.rpe || 5,
-        rest: seg.rest || seg.rest_seconds || 60,
-        notes: seg.notes || '',
+        rest: seg.rest || seg.rest_seconds || (seg.duration_min ? seg.duration_min * 60 : 60),
+        notes: [seg.content, seg.evidence ? `📚 ${seg.evidence}` : ''].filter(Boolean).join('\n'),
       }));
       setExercises(parsed);
     }
@@ -159,15 +159,19 @@ export function Planner() {
         weekdays: batchWeekdays,
         session_name: sessionName || '训练课',
         training_type: trainingType,
-        exercises: exercises.map((ex, i) => ({
-          exercise_id: (ex as any).exerciseId || '',
-          order_index: i,
-          target_weight_kg: ex.weight || undefined,
-          target_reps: ex.reps || undefined,
-          target_sets: ex.sets || undefined,
-          rest_seconds: ex.rest || undefined,
-          target_rpe: ex.rpe || undefined,
-        })),
+        exercises: exercises.map((ex, i) => {
+          const eid = (ex as any).exerciseId || '';
+          const base = {
+            order_index: i,
+            target_weight_kg: ex.weight || undefined,
+            target_reps: ex.reps || undefined,
+            target_sets: ex.sets || undefined,
+            rest_seconds: ex.rest || undefined,
+            target_rpe: ex.rpe || undefined,
+            notes: ex.notes || undefined,
+          };
+          return eid ? { ...base, exercise_id: eid } : base;
+        }),
       });
       setPlanMessage(`批量创建了 ${result.sessions_created} 个课次`);
       setShowBatchModal(false);
@@ -197,15 +201,19 @@ export function Planner() {
         session_name: sessionName,
         training_type: trainingType,
         notes: notes || undefined,
-        exercises: exercises.map((ex, i) => ({
-          exercise_id: (ex as any).exerciseId || '',
-          order_index: i,
-          target_weight_kg: ex.weight || undefined,
-          target_reps: ex.reps || undefined,
-          target_sets: ex.sets || undefined,
-          rest_seconds: ex.rest || undefined,
-          target_rpe: ex.rpe || undefined,
-        })),
+        exercises: exercises.map((ex, i) => {
+          const eid = (ex as any).exerciseId || '';
+          const base = {
+            order_index: i,
+            target_weight_kg: ex.weight || undefined,
+            target_reps: ex.reps || undefined,
+            target_sets: ex.sets || undefined,
+            rest_seconds: ex.rest || undefined,
+            target_rpe: ex.rpe || undefined,
+            notes: ex.notes || undefined,
+          };
+          return eid ? { ...base, exercise_id: eid } : base;
+        }),
       });
       setPlanMessage(`计划已保存: ${sessionName}`);
       if (selectedAthleteId && showWeekView) {
@@ -478,33 +486,53 @@ export function Planner() {
       {/* Template Picker Modal */}
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black/40 dark:bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-md shadow-xl border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 w-full max-w-lg shadow-xl border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">选择模板</h3>
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">选择训练模板</h3>
               <button onClick={() => setShowTemplateModal(false)} className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">
                 <X className="w-5 h-5 text-slate-400" />
               </button>
             </div>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
+            <div className="space-y-2 max-h-[32rem] overflow-y-auto">
               {templateLoading ? (
                 <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">加载中...</p>
               ) : templates.length === 0 ? (
                 <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">暂无可用模板</p>
               ) : (
-                templates.map(t => (
+                templates.map(t => {
+                  const intensityColors: Record<string, string> = {
+                    '低': 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400',
+                    '中': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400',
+                    '高': 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400',
+                    '极高': 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
+                  };
+                  const segments = t.content?.segments || [];
+                  const totalMin = t.content?.total_minutes || t.content?.target_duration_min || 0;
+                  return (
                   <div
                     key={t.id}
                     onClick={() => loadTemplate(t)}
                     className="p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer transition-colors"
                   >
-                    <div className="font-medium text-sm text-slate-700 dark:text-slate-200">{t.name}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      {t.intensity_zone}强度 · {t.content?.segments?.length || 0}个训练段落
-                      {t.target_focus && t.target_focus.length > 0 && ` · ${t.target_focus.join(', ')}`}
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm text-slate-700 dark:text-slate-200">{t.name}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${intensityColors[t.intensity_zone || ''] || 'bg-slate-100 text-slate-600'}`}>
+                        {t.intensity_zone || '?'}强度
+                      </span>
                     </div>
-                    <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{t.description}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      {totalMin}分钟 · {segments.length}个训练段落
+                      {t.weekly_frequency && ` · ${t.weekly_frequency}`}
+                    </div>
+                    <div className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-2">{t.description}</div>
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {(t.target_focus || []).map(f => (
+                        <span key={f} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">{f}</span>
+                      ))}
+                    </div>
                   </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>

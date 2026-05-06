@@ -151,6 +151,9 @@ html.dark input[type="date"], html.dark input[type="email"], html.dark input[typ
 }
 html.dark textarea:focus, html.dark input:focus { background: #1f2937; }
 html.dark select { background: var(--gray-card); border-color: var(--gray-border); color: var(--gray-text); }
+html.dark select.input {
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
 
 html.dark .btn-secondary { background: #1f2937; color: var(--gray-text); }
 html.dark .btn-secondary:hover { background: #374151; }
@@ -177,6 +180,38 @@ html.dark .text-slate-800 { color: #e2e8f0; }
 html.dark .text-slate-700 { color: #cbd5e1; }
 html.dark .text-slate-600 { color: #9ca3af; }
 html.dark .text-slate-500 { color: #6b7280; }
+
+/* ============================================================
+   Dark Mode — badge risk levels & alert types
+   ============================================================ */
+html.dark .badge-safe  { background: #064e3b; color: #34d399; }
+html.dark .badge-low   { background: #451a03; color: #fbbf24; }
+html.dark .badge-mid   { background: #78350f; color: #fcd34d; }
+html.dark .badge-high  { background: #450a0a; color: #f87171; }
+html.dark .badge-warn  { background: #450a0a; color: #f87171; }
+
+html.dark .status-safe  { color: #34d399; }
+html.dark .status-warn  { color: #fbbf24; }
+html.dark .status-danger { color: #f87171; }
+
+/* Dark mode — native select option bg (limited browser support) */
+html.dark select option { background: #1e293b; color: #e2e8f0; }
+html.dark input[type="checkbox"] { accent-color: var(--accent); }
+html.dark input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); }
+
+/* Dark mode — form elements using .input class */
+html.dark .input::placeholder { color: #64748b; }
+
+/* Dark mode — metric card text */
+html.dark .metric-card .metric-value { color: var(--gray-text); }
+html.dark .metric-card .metric-label { color: var(--gray-secondary); }
+
+/* Dark mode — risk colors */
+html.dark .risk-safe    { color: var(--green); }
+html.dark .risk-caution { color: var(--orange); }
+html.dark .risk-danger  { color: var(--red); }
+
+/* (modal & print rules already defined above) */
 html.dark .text-slate-400 { color: #6b7280; }
 html.dark .bg-slate-50 { background-color: #111827; }
 html.dark .bg-slate-100 { background-color: #1f2937; }
@@ -490,13 +525,4 @@ nav a.bg-cyan-500 {
   box-shadow: 0 2px 8px rgba(6,182,212,0.3);
 }
 
-html.dark .status-safe  { color: #34d399; }
-html.dark .status-warn  { color: #fbbf24; }
-html.dark .status-danger { color: #f87171; }
-
-@media print {
-  .no-print { display: none !important; }
-  body { background: #fff; }
-  .card, .card-glass { box-shadow: none; border: 0.5px solid #e5e5ea; break-inside: avoid; }
-  aside, header, nav, button, .btn { display: none !important; }
-}
+/* (status and print rules already defined above) */

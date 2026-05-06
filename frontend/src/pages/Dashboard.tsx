@@ -89,7 +89,7 @@ export function Dashboard() {
   }, [timeRange]);
 
   const athleteStatuses: any[] = data?.athlete_statuses || [];
-  const riskOrder = { '高风险': 4, '中风险': 3, '低风险': 2, '安全区': 1 };
+  const riskOrder: Record<string, number> = { '高风险': 4, '中风险': 3, '低风险': 2, '安全区': 1 };
 
   const sortedAthletes = useMemo(() => {
     return [...athleteStatuses].sort((a: any, b: any) => {

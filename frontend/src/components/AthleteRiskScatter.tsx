@@ -51,8 +51,8 @@ export function AthleteRiskScatter({ data, onAthleteClick }: Props) {
 
   const sorted = [...classified].sort((a, b) => (RISK_ORDER[b.riskLevel] || 0) - (RISK_ORDER[a.riskLevel] || 0));
 
-  const counts = { '不正常': 0, '亚正常': 0, '正常': 0 };
-  classified.forEach(d => { counts[d.riskLevel]++; });
+  const counts: Record<string, number> = { '不正常': 0, '亚正常': 0, '正常': 0 };
+  classified.forEach(d => { const k = d.riskLevel as string; if (k in counts) counts[k]++; });
 
   return (
     <div>

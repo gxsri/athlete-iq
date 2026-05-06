@@ -20,7 +20,19 @@ from app.database import engine, Base, logger, get_db, async_session
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
+        # Migration 1: make exercise_id optional on planned_exercises
+        try:
+            await conn.execute(text("DROP TABLE IF EXISTS planned_exercises"))
+        except Exception:
+            pass
         await conn.run_sync(Base.metadata.create_all)
+        # Migration 2: add weekly_frequency column
+        try:
+            await conn.execute(text(
+                "ALTER TABLE training_templates ADD COLUMN weekly_frequency VARCHAR(50)"
+            ))
+        except Exception:
+            pass
     from app.api.training_plans import seed_preset_templates
     async with async_session() as db:
         await seed_preset_templates(db)
