@@ -528,12 +528,10 @@ export function Reports() {
                         <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#94a3b8' }} />
                         <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} />
                         <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                          {[
-                            <Cell key="low" fill="#f59e0b" />,
-                            <Cell key="safe" fill="#27ae60" />,
-                            <Cell key="caution" fill="#f39c12" />,
-                            <Cell key="high" fill="#e74c3c" />,
-                          ]}
+                          <Cell key="low" fill="#f59e0b" />
+                          <Cell key="safe" fill="#27ae60" />
+                          <Cell key="caution" fill="#f39c12" />
+                          <Cell key="high" fill="#e74c3c" />
                         </Bar>
                         <Tooltip contentStyle={{ background: 'var(--gray-card)', border: '1px solid var(--gray-border)', borderRadius: 8, fontSize: 11 }} />
                       </BarChart>

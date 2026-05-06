@@ -279,7 +279,7 @@ export function TrainingLog() {
               <ReferenceLine yAxisId="right" y={0.8} stroke="#60a5fa" strokeDasharray="5 3" strokeWidth={1} />
               <Bar yAxisId="left" dataKey="actual" name="实际负荷" fill="#22d3ee" fillOpacity={0.55} radius={[3,3,0,0]} maxBarSize={22} />
               <Bar yAxisId="left" dataKey="plan" name="计划负荷" fill="#cbd5e1" fillOpacity={0.5} radius={[3,3,0,0]} maxBarSize={22} />
-              <Line yAxisId="right" type="monotone" dataKey="acwr" name="ACWR" stroke="#f87171" strokeWidth={2} dot={(p:any) => p.payload.high ? <circle cx={p.cx} cy={p.cy} r={5} fill="#f87171" stroke="#fff" strokeWidth={2}/> : <circle cx={p.cx} cy={p.cy} r={2} fill="#f87171"/>} />
+              <Line yAxisId="right" type="monotone" dataKey="acwr" name="ACWR" stroke="#f87171" strokeWidth={2} dot={(p:any) => p.payload.high ? <circle key={p.index ?? p.cx} cx={p.cx} cy={p.cy} r={5} fill="#f87171" stroke="#fff" strokeWidth={2}/> : <circle key={p.index ?? p.cx} cx={p.cx} cy={p.cy} r={2} fill="#f87171"/>} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
